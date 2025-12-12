@@ -260,7 +260,11 @@ buttons.forEach(function(btn) {
                         input.textContent = `-(${input.textContent})`;
                     }
                 } else if (num1 !== null && num2 !== null) {
-                    input.textContent = input.textContent.replace(`${num1}${operator}${num2}`, `${num1}${operator}(-${num2})`);
+                    if (input.textContent.at(0) == "(") {
+                        input.textContent = input.textContent.replace(`(${num1})${operator}${num2}`, `(${num1})${operator}(-${num2})`);
+                    } else {
+                        input.textContent = input.textContent.replace(`${num1}${operator}${num2}`, `${num1}${operator}(-${num2})`);
+                    }
                 }
             } else {
                 if (num1 === null) {
@@ -270,8 +274,12 @@ buttons.forEach(function(btn) {
                         input.textContent = input.textContent.slice(2, input.textContent.length - 1);
                     }
                 } else if (num1 !== null && num2 !== null) {
-                    console.log(num1, num2);
-                    input.textContent = input.textContent.replace(`${num1}${operator}(${num2})`, `${num1}${operator}${parseFloat(num2.toString().slice(1))}`);
+                    if (input.textContent.at(0) == "(") {
+                        input.textContent = input.textContent.replace(`(${num1})${operator}(${num2})`, `(${num1})${operator}${parseFloat(num2.toString().slice(1))}`);
+                    } else {
+                        input.textContent = input.textContent.replace(`${num1}${operator}(${num2})`, `${num1}${operator}${parseFloat(num2.toString().slice(1))}`);
+                    }
+                    
                 }
             }
         }
