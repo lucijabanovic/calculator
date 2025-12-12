@@ -236,6 +236,9 @@ buttons.forEach(function(btn) {
         }
 
         if (btn.getAttribute("id") == ("pm")) {
+            if (solved) {
+                input.textContent = `(-${input.textContent})`;
+            }
             evaluate();
             if (num1 === null) {
                 input.textContent = `(-${input.textContent})`;
