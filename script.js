@@ -76,6 +76,8 @@ let num = null;
 let subDigit = null;
 let solved = false;
 let dotClicked = false;
+let res = null;
+let pmClicked = false;
 
 function evaluate() {
     let opIndex = null;
@@ -172,6 +174,7 @@ buttons.forEach(function(btn) {
             }
 
             input.textContent += btn.firstElementChild.textContent;
+            pmClicked = false;
         }
 
         if (btn.getAttribute("id") == "delBtn") {
@@ -187,6 +190,7 @@ buttons.forEach(function(btn) {
             if (input.textContent.length == 0) {
                 input.textContent = 0;
             }
+            pmClicked = false;
         }
 
         if (btn.getAttribute("id") == "ac") {
@@ -196,6 +200,7 @@ buttons.forEach(function(btn) {
             num1 = null;
             num2 = null;
             operator = null;
+            pmClicked = false;
         }
 
         if (btn.classList.contains("operator") || btn.getAttribute("id") == "mod") { 
@@ -206,7 +211,12 @@ buttons.forEach(function(btn) {
 
                 if (!operator) {
                     operator = btn.firstElementChild.textContent;
-                    input.textContent += operator;
+                    if (input.textContent != "0") {
+                        input.textContent += operator;
+                    } else {
+                        input.textContent = operator;
+                        operator = null;
+                    }
                 } else {
                     evaluate();
                     if (!num2) {
@@ -220,6 +230,7 @@ buttons.forEach(function(btn) {
                     }
                 }
             }
+            pmClicked = false;
         }
 
         if (btn.getAttribute("id") == ("dot")) {
@@ -233,17 +244,35 @@ buttons.forEach(function(btn) {
                 input.textContent += ".";
                 dotClicked = true;
             }
+            pmClicked = false;
         }
 
         if (btn.getAttribute("id") == ("pm")) {
-            if (solved) {
-                input.textContent = `(-${input.textContent})`;
-            }
+            pmClicked = !pmClicked;
+            res = parseFloat(input.textContent);
             evaluate();
-            if (num1 === null) {
-                input.textContent = `(-${input.textContent})`;
-            } else if (num1 !== null && num2 !== null) {
-                input.textContent = input.textContent.replace(`${num2}`, `(-${num2})`);
+
+            if (pmClicked) {
+                if (num1 === null) {
+                    if (res > 0) {
+                        input.textContent = `(-${input.textContent})`;
+                    } else {
+                        input.textContent = `-(${input.textContent})`;
+                    }
+                } else if (num1 !== null && num2 !== null) {
+                    input.textContent = input.textContent.replace(`${num1}${operator}${num2}`, `${num1}${operator}(-${num2})`);
+                }
+            } else {
+                if (num1 === null) {
+                    if (input.textContent.at(0) == "-") {
+                        input.textContent = input.textContent.slice(2, input.textContent.length - 1);
+                    } else if (input.textContent.at(0) == "(") {
+                        input.textContent = input.textContent.slice(2, input.textContent.length - 1);
+                    }
+                } else if (num1 !== null && num2 !== null) {
+                    console.log(num1, num2);
+                    input.textContent = input.textContent.replace(`${num1}${operator}(${num2})`, `${num1}${operator}${parseFloat(num2.toString().slice(1))}`);
+                }
             }
         }
 
@@ -256,9 +285,12 @@ buttons.forEach(function(btn) {
                     upperInput.textContent = input.textContent;
                     input.textContent = operate(operator, num1, num2);
                     solved = true;
+                    num1 = null;
+                    num2 = null;
                     operator = null;
                 }
             }
+            pmClicked = false;
         }
 
         input.scrollLeft = input.scrollWidth;
