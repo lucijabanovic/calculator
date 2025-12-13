@@ -210,12 +210,11 @@ buttons.forEach(function(btn) {
                 upperInput.textContent = null;
 
                 if (!operator) {
-                    operator = btn.firstElementChild.textContent;
-                    if (input.textContent != "0") {
+                    if (input.textContent != "0" && !("＋-×÷%".includes(input.textContent))) {
+                        operator = btn.firstElementChild.textContent;
                         input.textContent += operator;
-                    } else {
-                        input.textContent = operator;
-                        operator = null;
+                    } else if (input.textContent == "0" && btn.firstElementChild.textContent == "-") {
+                        input.textContent = btn.firstElementChild.textContent;
                     }
                 } else {
                     evaluate();
@@ -235,6 +234,7 @@ buttons.forEach(function(btn) {
 
         if (btn.getAttribute("id") == ("dot")) {
             if (solved) {
+                upperInput.textContent = null;
                 solved = false;
                 if (input.textContent.includes(".")) {
                     dotClicked = true;
@@ -249,15 +249,23 @@ buttons.forEach(function(btn) {
 
         if (btn.getAttribute("id") == ("pm")) {
             pmClicked = !pmClicked;
+            console.log(pmClicked);
             res = parseFloat(input.textContent);
+            console.log(res);
             evaluate();
 
             if (pmClicked) {
                 if (num1 === null) {
                     if (res > 0) {
                         input.textContent = `(-${input.textContent})`;
+                    } else if (res < 0) {
+                        if (input.textContent.at(0) == "-") {
+                            input.textContent = input.textContent.slice(1);
+                        } else {
+                            input.textContent = `-(${input.textContent})`;
+                        }
                     } else {
-                        input.textContent = `-(${input.textContent})`;
+                        input.textContent = input.textContent.slice(2, input.textContent.length - 1);
                     }
                 } else if (num1 !== null && num2 !== null) {
                     if (input.textContent.at(0) == "(") {
@@ -272,6 +280,8 @@ buttons.forEach(function(btn) {
                         input.textContent = input.textContent.slice(2, input.textContent.length - 1);
                     } else if (input.textContent.at(0) == "(") {
                         input.textContent = input.textContent.slice(2, input.textContent.length - 1);
+                    } else {
+                        input.textContent = `(-${input.textContent})`;
                     }
                 } else if (num1 !== null && num2 !== null) {
                     if (input.textContent.at(0) == "(") {
@@ -279,7 +289,6 @@ buttons.forEach(function(btn) {
                     } else {
                         input.textContent = input.textContent.replace(`${num1}${operator}(${num2})`, `${num1}${operator}${parseFloat(num2.toString().slice(1))}`);
                     }
-                    
                 }
             }
         }
@@ -289,14 +298,17 @@ buttons.forEach(function(btn) {
                 dotClicked = false;
                 evaluate();
 
-                if (num1 !== null && operator !== null && num2 !== null) {
+                if (!isNaN(num1) && operator !== null && !isNaN(num2)) {
                     upperInput.textContent = input.textContent;
                     input.textContent = operate(operator, num1, num2);
-                    solved = true;
-                    num1 = null;
-                    num2 = null;
-                    operator = null;
+                } else if (!isNaN(num1) && operator == "%" && isNaN(num2)) {
+                    upperInput.textContent = input.textContent;
+                    input.textContent = num1 / 100;
                 }
+                solved = true;
+                num1 = null;
+                num2 = null;
+                operator = null;
             }
             pmClicked = false;
         }
