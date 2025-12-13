@@ -254,7 +254,7 @@ buttons.forEach(function(btn) {
             console.log(res);
             evaluate();
 
-            if (pmClicked) {
+            if (pmClicked && input.textContent != "0") {
                 if (num1 === null) {
                     if (res > 0) {
                         input.textContent = `(-${input.textContent})`;
@@ -274,7 +274,7 @@ buttons.forEach(function(btn) {
                         input.textContent = input.textContent.replace(`${num1}${operator}${num2}`, `${num1}${operator}(-${num2})`);
                     }
                 }
-            } else {
+            } else if (!pmClicked && input.textContent != "0") {
                 if (num1 === null) {
                     if (input.textContent.at(0) == "-") {
                         input.textContent = input.textContent.slice(2, input.textContent.length - 1);
